@@ -6,70 +6,78 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import random
 
-#array that will store numbers per frame of entities for analyzing graph
-blob_number_per_frame=[]
-predator_number_per_frame=[]
+# Array that will store numbers per frame of entities for analyzing graph
+blob_number_per_frame = []
+predator_number_per_frame = []
 
-#constants
+# Constants
 maxPredators = 20
 maxBlobs = 20
 maxFrames = 200
 
-#Simulation Environment
-env=Environment(50)
+# Simulation Environment
+env = Environment(50)
 
-#selecting random frames for the predators to spawn
-predFrames = [random.randint(0,maxFrames) for _ in range(maxPredators)]
+# Selecting random frames for the predators to spawn
+predFrames = [random.randint(0, maxFrames) for _ in range(maxPredators)]
 predFrames.sort()
-#selecting random frames for the blobs to spawn
-blobFrames = [random.randint(0,maxFrames) for _ in range(maxBlobs)]
+# Selecting random frames for the blobs to spawn
+blobFrames = [random.randint(0, maxFrames) for _ in range(maxBlobs)]
 blobFrames.sort()
 
-#increment age after you add the die function for all entities
-def update(frame):
-    #print(env.blobs)
+# Create the plot
+fig, ax = plt.subplots()
+im = ax.imshow(env.space, animated=True)
 
-    #generating 5 blobs at random frames
+# Create text element to display mitosis count outside of the plot
+mitosis_text_outside = plt.text(0.5, 1.05, '', color='blue', fontsize=12, ha='center', transform=fig.transFigure)
+
+def update(frame):
+    # Generating 5 blobs at random frames
     if frame in blobFrames:
         for _ in range(5):
-            tempForGender=random.choice([True, False])
+            tempForGender = random.choice([True, False])
             Blob(tempForGender, 5, env)
-    #Blob movement in each frame
+    # Blob movement in each frame
     for blob in env.blobs:
         blob.age += 0.2
         blob.movement()
 
-
-    #Predator generating in random frames
+    # Predator generating in random frames
     if frame in predFrames:
-        tempForGender=random.choice([True, False])
+        tempForGender = random.choice([True, False])
         Predator(tempForGender, 5, env)
-    
 
-    #Predator movement in each frame
+    # Predator movement in each frame
     for predator in env.predators:
         predator.age += 0.2
-        #print(predator)
         predator.movement()
 
-    #generate food every 10 frames
-    if frame%10==0 and frame != 0:
-        env.add_food([],5,10)
- 
+    # Generate food every 10 frames
+    if frame % 10 == 0 and frame != 0:
+        env.add_food([], 5, 10)
+
     # Update the plot
     im.set_array(env.space)
     blob_number_per_frame.append(len(env.blobs))
     predator_number_per_frame.append(len(env.predators))
-    return [im]
+    
+    # Update text element with mitosis count
+    mitosis_text_outside.set_text(f'Mitosis: {env.mitosisCount}')
+    
+    # Return a list of artists to be updated in the animation
+    return [im, mitosis_text_outside]
 
-#plotting the graph
-fig, ax = plt.subplots()
-im = ax.imshow(env.space, animated=True)
-ani = animation.FuncAnimation(fig, update, frames=maxFrames, interval=100, blit=True) #actually animates all the frames
+# Plot the animation
+ani = animation.FuncAnimation(fig, update, frames=maxFrames, interval=100, blit=True)  # Actually animates all the frames
+
+# Display the plot
 plt.show()
 
+# Plot the graph for analyzing the number of entities
 plt.plot(blob_number_per_frame, label='Blobs')
 plt.plot(predator_number_per_frame, label='Predators')
 plt.xlabel('Frame')
 plt.ylabel('Number of entities')
+plt.legend()
 plt.show()

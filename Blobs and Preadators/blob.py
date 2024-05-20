@@ -79,6 +79,7 @@ class Blob:
                         
                         Blob(True, self.childage, self.environment,newx,newy)
                         self.energy=self.birthenergy
+                        self.environment.mitosisCount+=1
 
 
         
