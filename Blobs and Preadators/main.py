@@ -11,7 +11,7 @@ blob_number_per_frame = []
 predator_number_per_frame = []
 
 # Constants
-maxPredators = 20
+maxPredators = 50
 maxBlobs = 20
 maxFrames = 200
 

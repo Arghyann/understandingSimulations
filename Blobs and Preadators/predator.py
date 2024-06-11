@@ -94,5 +94,6 @@ class Predator:
                                             # Play the new sound
                                             #play_obj = wave_obj.play()
                                             self.environment.reproductionCount+=1
+                                            print("reproduction occured")
                                             return
 
